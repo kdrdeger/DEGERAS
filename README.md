@@ -1,0 +1,2 @@
+# DEGERAS
+DEGERAS Kullanım Firmanın Stoğunun , çalışanlarının ve lojistik süreçlerinin kontrolü. İşlev kapsamı Program stok kaydı yapabilir , ürün satışı yapabilir ve ürünü stoktan düşer , stokta kayıtlı olan bir ürünü  gücelleyebilir, tüm stok kaydını görüntülüyebilir.Personel kaydı yapabilir,personel silebilir ,personelleri listeleyebilir.Lojistik bir süreç oluşturabilir.ALV çıktısı alabilir,Satılan ürüne fatura çıkarabilir.Eklenilen butonla stoğun o an ki kontejyanı hakkında bilgi alabilir.
