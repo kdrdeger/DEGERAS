@@ -1,0 +1,162 @@
+MODULE user_command_0010 INPUT.
+
+  DATA ok_code TYPE sy-ucomm.
+  ok_code = sy-ucomm.
+
+  CASE ok_code.
+
+    WHEN 'BACK'.
+      LEAVE PROGRAM.
+    WHEN 'EXIT'.
+      LEAVE PROGRAM.
+    WHEN 'CANCEL'.
+      LEAVE PROGRAM.
+*" stok ekleme işlemi
+    WHEN 'STK'.
+      wa_degeras-urunid = zkd_degeras-urunid.
+      wa_degeras-matnr = zkd_degeras-matnr.
+      wa_degeras-urunfyt = zkd_degeras-urunfyt.
+      wa_degeras-kayitypn = zkd_degeras-kayitypn.
+      wa_degeras-tarih = zkd_degeras-tarih.
+      wa_degeras-saat = zkd_degeras-saat.
+
+      APPEND wa_degeras TO gt_degeras.
+      MODIFY zkd_degeras FROM TABLE gt_degeras.
+      MESSAGE 'STOK KAYDI BAŞARILI' TYPE 'I'.
+      PERFORM select_data.
+      PERFORM display_alv.
+
+*" satış işlemi
+    WHEN 'STS'.
+      WA_Satıs-urunid = zkd_degeras-urunid.
+      WA_Satıs-matnr = zkd_degeras-matnr.
+      WA_Satıs-urunfyt = zkd_degeras-urunfyt.
+      WA_Satıs-kayitypn = zkd_degeras-kayitypn.
+      WA_Satıs-tarih = zkd_degeras-tarih.
+      WA_Satıs-saat = zkd_degeras-saat.
+
+      APPEND wa_satıs TO gt_satıs.
+      DELETE zkd_degeras FROM TABLE gt_satıs.
+      MESSAGE 'Silme İşlemi başarılı.' TYPE 'I'.
+      CLEAR gt_satıs.
+      PERFORM select_data.
+      PERFORM display_alv.
+
+*" stoğu getirme işlemi
+    WHEN 'GOR'.
+      PERFORM select_data.
+      PERFORM display_alv.
+
+
+
+    WHEN 'CIKTI'.
+
+      data: lv_fmname type RS38L_FNAM.
+
+      CALL FUNCTION 'SSF_FUNCTION_MODULE_NAME'
+        EXPORTING
+          formname                 =  'ZKD_SF_DEGERASSTOK'
+
+       IMPORTING
+         FM_NAME                  = lv_fmname
+       EXCEPTIONS
+         NO_FORM                  = 1
+         NO_FUNCTION_MODULE       = 2
+         OTHERS                   = 3
+                .
+      IF sy-subrc <> 0.
+* Implement suitable error handling here
+      ENDIF.
+
+
+      CALL FUNCTION lv_fmname
+        EXPORTING
+
+          gv_urunid                  = ZKD_DEGERAS-URUNID
+          gv_matnr                   = ZKD_DEGERAS-MATNR
+          gv_urunfyt                 = ZKD_DEGERAS-URUNFYT
+          gv_kayitypn                = ZKD_DEGERAS-KAYITYPN
+          gv_tarih                   = ZKD_DEGERAS-TARIH
+          gv_saat                    = ZKD_DEGERAS-SAAT
+
+       EXCEPTIONS
+         FORMATTING_ERROR           = 1
+         INTERNAL_ERROR             = 2
+         SEND_ERROR                 = 3
+         USER_CANCELED              = 4
+         OTHERS                     = 5
+                .
+      IF sy-subrc <> 0.
+* Implement suitable error handling here
+      ENDIF.
+
+
+
+*" stok hesabı yapma işlemi
+    WHEN 'HESAP'.
+      IF zkd_degeras-matnr GE 1002501.
+        MESSAGE 'DEPO TAMAMEN DOLU.' TYPE 'I'.
+      ELSEIF zkd_degeras-matnr LT 1000650.
+        MESSAGE 'DEPO FAZLASIYLA BOŞ.' TYPE 'I'.
+      ELSE.
+        MESSAGE 'DEPO ORTA SEVİYE DOLULUKTA.' TYPE 'I'.
+        PERFORM select_data.
+        PERFORM display_alv.
+
+*" TOPLAM DEPO STOĞU 2500 BİRİM OLARAK HESAPLANMIŞTIR.
+      ENDIF.
+
+*    WHEN 'LST'.
+*      PERFORM data_select.
+*      PERFORM alv_display.
+
+
+*" işçi ekleme işlemi
+    WHEN 'ISCI'.
+      wa_degerasisci-isciadi = ZKD_DEGERAS_ISCI-ISCIADI.
+      wa_degerasisci-iscisoyad = ZKD_DEGERAS_ISCI-ISCISOYAD.
+      wa_degerasisci-iscicinsiyet = ZKD_DEGERAS_ISCI-ISCICINSIYET.
+      wa_degerasisci-isciyas = ZKD_DEGERAS_ISCI-ISCIYAS.
+      wa_degerasisci-iscimaas = ZKD_DEGERAS_ISCI-ISCIMAAS.
+      wa_degerasisci-URUNID = ZKD_DEGERAS_ISCI-URUNID.
+      APPEND wa_degerasisci TO gt_degerasisci.
+      MODIFY zkd_degeras_isci FROM TABLE gt_degerasisci.
+      MESSAGE 'İŞÇİ KAYDI BAŞARILI' TYPE 'I'.
+*      PERFORM data_select.
+*      PERFORM alv_display.
+
+
+*" işçi silme işlemi
+      when 'ISIL'.
+        wa_iscisil-ISCIADI = ZKD_DEGERAS_ISCI-ISCIADI.
+        wa_iscisil-ISCISOYAD = ZKD_DEGERAS_ISCI-ISCISOYAD.
+        wa_iscisil-ISCICINSIYET = ZKD_DEGERAS_ISCI-ISCICINSIYET.
+        wa_iscisil-ISCIYAS = ZKD_DEGERAS_ISCI-ISCIYAS.
+        wa_iscisil-ISCIMAAS = ZKD_DEGERAS_ISCI-ISCIMAAS.
+        wa_iscisil-URUNID = ZKD_DEGERAS_ISCI-URUNID.
+      APPEND wa_iscisil TO gt_iscisil.
+      DELETE ZKD_DEGERAS_ISCI FROM TABLE gt_iscisil.
+      MESSAGE 'İşçi Silme İşlemi Başarılı.' TYPE 'I'.
+      CLEAR gt_iscisil.
+
+      when 'TLMT'.
+        WA_LOJISTIK-KALKIS = ZKD_LOJISTIK-KALKIS.
+        WA_LOJISTIK-VARIS = ZKD_LOJISTIK-VARIS.
+        WA_LOJISTIK-TALIMATVEREN = ZKD_LOJISTIK-TALIMATVEREN.
+
+        APPEND WA_LOJISTIK TO GT_LOJISTIK.
+        MODIFY ZKD_LOJISTIK FROM TABLE GT_LOJISTIK.
+      MESSAGE 'LOJİSTİK TALİMATI BAŞARI İLE OLUŞTURULDU.' TYPE 'I'.
+
+
+
+    WHEN OTHERS.
+
+  ENDCASE.
+
+
+
+
+
+
+ENDMODULE.
