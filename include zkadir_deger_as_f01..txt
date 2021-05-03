@@ -1,0 +1,44 @@
+FORM select_data.
+  SELECT * FROM zkd_degeras INTO CORRESPONDING FIELDS OF TABLE gt_degeras.
+ENDFORM.
+
+
+*"ALV ÇIKTISI İÇİN GEREKLİ PERFORM ZKD_DEGERAS İÇİN
+FORM display_alv.
+  CALL FUNCTION 'REUSE_ALV_GRID_DISPLAY'
+    EXPORTING
+      i_structure_name = gc_structure
+      it_fieldcat      = gt_fieldcat[]
+    TABLES
+      t_outtab         = gt_degeras[]
+    EXCEPTIONS
+      program_error    = 1
+      OTHERS           = 2.
+  IF sy-subrc <> 0.
+* Implement suitable error handling here
+  ENDIF.
+ENDFORM.
+
+form fieldcat_merge.
+
+  CALL FUNCTION 'REUSE_ALV_FIELDCATALOG_MERGE'
+   EXPORTING
+     I_PROGRAM_NAME               = sy-repid
+     I_INTERNAL_TABNAME           = gt_degeras[]
+     I_STRUCTURE_NAME             = gc_structure
+
+    CHANGING
+      ct_fieldcat                  = gt_fieldcat[]
+*   EXCEPTIONS
+*     INCONSISTENT_INTERFACE       = 1
+*     PROGRAM_ERROR                = 2
+*     OTHERS                       = 3
+            .
+
+
+
+
+
+
+
+  ENDFORM.
