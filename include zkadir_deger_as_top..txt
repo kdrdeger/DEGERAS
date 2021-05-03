@@ -1,0 +1,67 @@
+TABLES:zkd_degeras.
+
+TABLES:zkd_degeras_isci.
+
+TABLES:ZKD_LOJISTIK.
+
+
+*" alv için gerekli tip havuzu
+TYPE-POOLS: slis.
+
+*"zkd_degeras dataların tanımlanması
+DATA:urunid(2) TYPE c.
+DATA:matnr(40) TYPE c.
+DATA:urunfyt(5) TYPE n.
+DATA:kayitypn(21) TYPE c.
+DATA:tarih(8) TYPE n.
+DATA:saat(5) TYPE c.
+
+*"zkd_degeras_ıscı dataların tanımlanması
+DATA:isciadi(20) TYPE c.
+DATA:iscisoyad(20) TYPE c.
+DATA:iscicinsiyet(5) TYPE c.
+DATA:isciyas(3) TYPE n.
+DATA:iscimaas(5) TYPE n.
+
+*" ZKD_LOJISTIK DATALARI TANIMLANMASI
+DATA:KALKIS(20) TYPE C.
+DATA:VARIS(20) TYPE C.
+DATA:TALIMATVEREN(35) TYPE C.
+
+
+
+*" zkd_degeras global table ve structurenin oluşturulması
+
+DATA: gt_degeras LIKE STANDARD TABLE OF zkd_degeras.
+
+DATA: wa_degeras LIKE LINE OF gt_degeras.
+
+DATA:gt_fieldcat TYPE slis_t_fieldcat_alv WITH HEADER LINE.
+
+CONSTANTS: gc_structure TYPE dd02l-tabname VALUE 'zkd_degeras'.
+
+*"ZKD_DEGERAS_ISCI GLOBAL TABLE VE STRUCTURESİNİN OLUŞTURULMASI
+
+DATA:gt_degerasisci LIKE STANDARD TABLE OF zkd_degeras_isci.
+
+DATA:wa_degerasisci LIKE LINE OF gt_degerasisci.
+
+CONSTANTS: gc_structure1 TYPE dd02l-tabname VALUE 'gt_degerasisci'.
+
+DATA:gt_fieldcat1 TYPE slis_t_fieldcat_alv WITH HEADER LINE.
+
+
+*"satış işlemi için gerekli global table tanımlaması.
+
+DATA: GT_Satıs LIKE STANDARD TABLE OF ZKD_degeras.
+
+DATA WA_Satıs LIKE LINE OF GT_Satıs.
+
+*" işçi silme için gerekli global table
+
+DATA: gt_iscisil LIKE STANDARD TABLE OF zkd_degeras_isci.
+DATA wa_iscisil LIKE LINE OF gt_iscisil.
+
+*" LOJİSTİK TALİMATI İÇİN GEREKLİ GLOBAL TABLE
+DATA: GT_LOJISTIK LIKE STANDARD TABLE OF ZKD_LOJISTIK.
+DATA: WA_LOJISTIK LIKE LINE OF GT_LOJISTIK.
